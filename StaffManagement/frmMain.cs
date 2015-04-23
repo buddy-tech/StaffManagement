@@ -61,6 +61,36 @@ namespace StaffManagement
             //判断是否有相同记录
             if (IsSameRecord() == ture)
                 return;
+            using (SqlConnection con = new SqlConnection(strConn))
+            {
+                if (con.State == ConnectionState.Closed)
+                    con.Open();
+                try
+                {
+                    StringBuilder strSQL = new StringBuilder();
+                    strSQL.Append("INSERT INTO tb_Staff(No,Name,Salary,Evaluation)");
+                    strSQL.Append(" VALUES('" + this.txtNo.Text.Trim().ToString() + "','" + this.txtName.Text.Trim().ToString() + "','" + Convert.ToSingle(this.txtSalary.Text.Trim().ToString()) + "','" + this.txtEvaluation.Text.Trim().ToString() + "')");
+                    using (SqlCommand cmd = new SqlCommand(strSQL.ToString(), con))
+                    {
+                        cmd.ExecuteNonQuery();
+                        MessageBox.Show("信息增加成功！");
+                    }
+                    strSQL.Remove(0, strSQL.Length);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("错误：" + ex.Message, "错误提示", MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
+                }
+                finally
+                {
+                    if (con.State == ConnectionState.Open)
+                    {
+                        con.Close();
+                        con.Dispose();
+                    }
+                }
+                showInfo();
+            }
         }
         public bool IsNumeric(string strCode)
         {
@@ -74,6 +104,17 @@ namespace StaffManagement
                     return false;
             }
             return false;
+        }
+        private bool IsSameRecord()
+        {
+            using (SqlConnection con = new SqlConnection(strConn))
+            {
+                if (con.State == ConnectionState.Closed)
+                    con.Open();
+                string Str_condition = "";
+                string Str_cmdtxt = "";
+                
+            }
         }
     }
 }

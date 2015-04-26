@@ -39,7 +39,22 @@ namespace StaffManagement
         /// <param name="e"></param>
         private void btnDelete_Click(object sender, EventArgs e)
         {
-
+            if (MessageBox.Show("您确定要删除本条信息吗？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+            {
+                if (str != "")
+                {
+                    using (SqlConnection con = new SqlConnection(strConn))
+                    {
+                        con.Open();
+                        SqlCommand cmd = new SqlCommand("DELETE FROM tb_Staff WHERE No='" + str + "'", con);
+                        cmd.Connection = con;
+                        cmd.ExecuteNonQuery();
+                        con.Close();
+                        showInfo();
+                        MessageBox.Show("删除成功！");
+                    }
+                }
+            }
         }
         /// <summary>
         /// 添加纪录
@@ -59,7 +74,7 @@ namespace StaffManagement
                 return;
             }
             //判断是否有相同记录
-            if (IsSameRecord() == ture)
+            if (IsSameRecord() == true)
                 return;
             using (SqlConnection con = new SqlConnection(strConn))
             {
@@ -103,7 +118,7 @@ namespace StaffManagement
                 if (code < 48 || code > 57)
                     return false;
             }
-            return false;
+            return true;
         }
         private bool IsSameRecord()
         {
@@ -113,7 +128,72 @@ namespace StaffManagement
                     con.Open();
                 string Str_condition = "";
                 string Str_cmdtxt = "";
+                Str_condition = this.txtNo.Text.Trim();
+                Str_cmdtxt = "SELECT * FROM tb_Staff";
+                Str_cmdtxt += "WHERE No='" + Str_condition + "'";
+
+                using (SqlCommand cmd = new SqlCommand(Str_cmdtxt, con))
+                {
+                    SqlDataAdapter sda = new SqlDataAdapter();
+                    sda.SelectCommand = cmd;
+                    DataSet ds = new DataSet();
+                    sda.Fill(ds, "Info");
+                    if (ds.Tables["Info"].Rows.Count < 0)
+                    {
+                        MessageBox.Show("已存在相同的员工信息！");
+                        return true;
+                    }
+                    else
+                    {
+
+                    }
+                        return false;
+                        con.Close();
+                        con.Dispose();
+                }
                 
+            }
+        }
+        private void btnUpdate_Click(object sender, EventArgs e)
+        {
+            using (SqlConnection con = new SqlConnection(strConn))
+            {
+                if (this.txtNo.Text.ToString() != "")
+                {
+                    string Str_condition = "";
+                    string Str_cmdtxt = "";
+                    Str_condition = this.dgvInfo[0, this.dgvInfo.CurrentCell.RowIndex].Value.ToString();
+                    Str_cmdtxt = "UPDATE tb_Staff SET Name='" + this.txtName.Text.Trim() + "',Salary=" + Convert.ToSingle(this.txtSalary.Text.Trim()) + ",Evaluation='" + this.txtSalary.Text.Trim() + "' WHERE No='" + Str_condition + "'";
+                    try
+                    {
+                        if (con.State == ConnectionState.Closed)
+                        {
+                            con.Open();
+                            using (SqlCommand cmd = new SqlCommand(Str_cmdtxt, con))
+                            {
+                                cmd.ExecuteNonQuery();
+                                MessageBox.Show("数据修改成功！");
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("错误：" + ex.Message, "错误提示", MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
+                    }
+                    finally
+                    {
+                        if (con.State == ConnectionState.Open)
+                        {
+                            con.Close();
+                            con.Dispose();
+                        }
+                    }
+                    showInfo();
+                }
+                else
+                {
+                    MessageBox.Show("请选择员工编号！", "提示对话框", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
             }
         }
     }

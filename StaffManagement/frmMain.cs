@@ -163,7 +163,7 @@ namespace StaffManagement
                     string Str_condition = "";
                     string Str_cmdtxt = "";
                     Str_condition = this.dgvInfo[0, this.dgvInfo.CurrentCell.RowIndex].Value.ToString();
-                    Str_cmdtxt = "UPDATE tb_Staff SET Name='" + this.txtName.Text.Trim() + "',Salary=" + Convert.ToSingle(this.txtSalary.Text.Trim()) + ",Evaluation='" + this.txtSalary.Text.Trim() + "' WHERE No='" + Str_condition + "'";
+                    Str_cmdtxt = "UPDATE tb_Staff SET Name='" + this.txtName.Text.Trim() + "',Salary=" + Convert.ToSingle(this.txtSalary.Text.Trim()) + ",Evaluation='" + this.txtEvaluation.Text.Trim() + "' WHERE No='" + Str_condition + "'";
                     try
                     {
                         if (con.State == ConnectionState.Closed)
@@ -195,6 +195,23 @@ namespace StaffManagement
                     MessageBox.Show("请选择员工编号！", "提示对话框", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
+        }
+        private void FillControls()
+        {
+            try
+            {
+                this.txtNo.Text = this.dgvInfo[0, this.dgvInfo.CurrentCell.RowIndex].Value.ToString();
+                this.txtName.Text = this.dgvInfo[1, this.dgvInfo.CurrentCell.RowIndex].Value.ToString();
+                this.txtSalary.Text = this.dgvInfo[2, this.dgvInfo.CurrentCell.RowIndex].Value.ToString();
+                this.txtEvaluation.Text = this.dgvInfo[3, this.dgvInfo.CurrentCell.RowIndex].Value.ToString();
+            }
+            catch { }
+        }
+
+        private void dgvInfo_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            str = this.dgvInfo.SelectedCells[0].Value.ToString();
+            FillControls();
         }
     }
 }

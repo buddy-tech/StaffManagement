@@ -130,7 +130,7 @@ namespace StaffManagement
                 string Str_cmdtxt = "";
                 Str_condition = this.txtNo.Text.Trim();
                 Str_cmdtxt = "SELECT * FROM tb_Staff";
-                Str_cmdtxt += "WHERE No='" + Str_condition + "'";
+                Str_cmdtxt += " WHERE No='" + Str_condition + "'";
 
                 using (SqlCommand cmd = new SqlCommand(Str_cmdtxt, con))
                 {
